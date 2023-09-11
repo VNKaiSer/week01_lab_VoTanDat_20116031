@@ -31,14 +31,18 @@ public class ControllerServlet extends HttpServlet {
                 break;
 
             case "login":
+                req.getRequestDispatcher("/index").forward(req, resp);
                 break;
             }
         }else {
             resp.setContentType("text/html");
 
-            // Forward the request to the "index.jsp" view
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
+            // Hello
+            PrintWriter out = resp.getWriter();
+            out.println("<html><body>");
+            out.println("<h1>" + "message" + "</h1>");
+            out.println("</body></html>");
+
         }
     }
 }
