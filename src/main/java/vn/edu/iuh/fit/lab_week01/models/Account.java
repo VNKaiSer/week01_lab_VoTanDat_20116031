@@ -9,6 +9,7 @@ public class Account {
     private int status;
 
     public Account() {
+        this.accountId = "no account";
     }
 
     public Account(String accountId, String fullName, String password, String email, String phone, int status) {

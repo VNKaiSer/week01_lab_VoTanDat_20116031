@@ -2,9 +2,8 @@ package vn.edu.iuh.fit.lab_week01.respositories;
 
 import vn.edu.iuh.fit.lab_week01.models.Account;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountRespository implements IFRespository<Account> {
@@ -60,16 +59,51 @@ public class AccountRespository implements IFRespository<Account> {
 
     @Override
     public Account getOne(String id) {
-        return null;
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE account_id=?";
+        try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
+            ppsm.setString(1, id);
+            ResultSet rs = ppsm.executeQuery();
+            if (rs.next()){
+                return new Account(rs.getString("account_id"),
+                                    rs.getString("full_name"),
+                                    rs.getString("password"),
+                                    rs.getString("email"),
+                                    rs.getString("phone"),
+                                    rs.getInt("status"));
+            }
+            return new Account();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Account> getALL(Class<Account> clazz) {
-        return null;
+    public List<Account> getALL(Class<Account> clazz) throws SQLException {
+        String sql = "SELECT * FROM " + TABLE_NAME;
+        Statement stm = connection.createStatement();
+        ResultSet rs = stm.executeQuery(sql);
+        List<Account> accounts = new ArrayList<>();
+        while (rs.next()){
+            Account tmpAccount = new Account(rs.getString("account_id"),
+                    rs.getString("full_name"),
+                    rs.getString("password"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getInt("status"));
+            accounts.add(tmpAccount);
+        }
+        return accounts;
     }
 
     @Override
     public boolean delete(String id) {
-        return false;
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE account_id=?";
+        try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
+            ppsm.setString(1, id);
+            int rowsAffected = ppsm.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
