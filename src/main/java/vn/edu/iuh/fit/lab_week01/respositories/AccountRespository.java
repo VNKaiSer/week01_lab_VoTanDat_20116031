@@ -16,7 +16,7 @@ public class AccountRespository implements IFRespository<Account> {
 
 
     @Override
-    public boolean insert(Account object) throws SQLException {
+    public boolean insert(Account object)  {
         String sql = "INSERT " + TABLE_NAME + "\n" +
                      "VALUES(?,?,?,?,?,?)";
         try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class AccountRespository implements IFRespository<Account> {
     }
 
     @Override
-    public List<Account> getALL(Class<Account> clazz) throws SQLException {
+    public List<Account> getALL() throws SQLException {
         String sql = "SELECT * FROM " + TABLE_NAME;
         Statement stm = connection.createStatement();
         ResultSet rs = stm.executeQuery(sql);

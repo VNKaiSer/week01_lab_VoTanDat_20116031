@@ -7,6 +7,6 @@ public interface IFRespository<T> {
     boolean insert(T object) throws SQLException;
     boolean update(String id, T object);
     T getOne(String id);
-    List<T> getALL(Class<T> clazz) throws SQLException;
+    List<T> getALL() throws SQLException;
     boolean delete(String id);
 }
