@@ -1,6 +1,7 @@
 package vn.edu.iuh.fit.lab_week01.respositories;
 
 import vn.edu.iuh.fit.lab_week01.models.Account;
+import vn.edu.iuh.fit.lab_week01.models.STATUS;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class AccountRespository implements IFRespository<Account> {
                                     rs.getString("password"),
                                     rs.getString("email"),
                                     rs.getString("phone"),
-                                    rs.getInt("status"));
+                                    STATUS.values()[rs.getInt("status")]);
             }
             return new Account();
         } catch (SQLException e) {
@@ -89,7 +90,7 @@ public class AccountRespository implements IFRespository<Account> {
                     rs.getString("password"),
                     rs.getString("email"),
                     rs.getString("phone"),
-                    rs.getInt("status"));
+                    STATUS.values()[rs.getInt("status")]);
             accounts.add(tmpAccount);
         }
         return accounts;
@@ -106,31 +107,63 @@ public class AccountRespository implements IFRespository<Account> {
             throw new RuntimeException(e);
         }
     }
-
-    public void login(String username, String password){
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE account_id=? AND password=?";
-        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
-            ppsm.setString(1, username);
-            ppsm.setString(2, password);
-            ResultSet rs = ppsm.executeQuery();
-            if(rs.next()){
-                Account account = new Account();
-                account.setAccountId(rs.getString("account_id"));
-                account.setPassword(rs.getString("password"));
-                account.setEmail(rs.getString("email"));
-                account.setFullName(rs.getString("full_name"));
-                account.setPhone(rs.getString("phone"));
-                account.setStatus(rs.getInt("status"));
+    /**
+     * Authenticates a user by checking if the provided username and password match an active account in the database.
+     *
+     * @param  username  the username of the user
+     * @param  password  the password of the user
+     * @return           an integer value representing the authentication result:
+     *                   - 1: if the user is an admin
+     *                   - 0: if the user is not an admin
+     *                   - 2: if the user account is not activated
+     *                   - (-1): if the user account has been deleted
+     *                   - (-2): if the username or password is incorrect
+     */
+    public int login(String username, String password) throws SQLException {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE account_id=? AND password=? AND status=1";
+        PreparedStatement ppsm = connection.prepareStatement(sql);
+        ppsm.setString(1, username);
+        ppsm.setString(2, password);
+        ResultSet rs = ppsm.executeQuery();
+        if (rs.next()) {
+            // kiểm tra tài khoản có bị khoá không
+            int status = rs.getInt("status");
+            if (status == 1) { // còn kích hoạt
+                if (isAdmin(username)) {
+                    return 1;
+                }
+                return 0; // không có quyền admin
+            } else if (status == 0) {
+                return 2; // không kích hoạt
+            } else if (status == -1) {
+                return -1; // đã bị xoá hoặc
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } else { // tài khoản mật khẩu không chính xác
+            return -2;
         }
+        return -2;
     }
 
-    public void getRoleAccount(String accountId){
-        String sql = "SELECT * FROM grant_access WHERE account_id=?";
+    /**
+     * Checks if the given account ID belongs to an admin.
+     *
+     * @param  accountId    the ID of the account to check
+     * @return              true if the account is an admin, false otherwise
+     * @throws SQLException if there is an error accessing the database
+     */
+    public boolean isAdmin(String accountId) throws SQLException {
+        String sql =
+                "SELECT role_name\n" +
+                "FROM role\n" +
+                "WHERE role_id IN (\n" +
+                "\tSELECT role_id \n" +
+                "\tFROM grant_access\n" +
+                "\tWHERE is_grant = '1' and account_id = ?\n" +
+                ")";
         try(PreparedStatement ppsm = connection.prepareStatement(sql)){
-
+            ppsm.setString(1, accountId);
+            ResultSet rs = ppsm.executeQuery();
+            return rs.next();
         }
     }
 }
