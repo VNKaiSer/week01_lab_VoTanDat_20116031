@@ -106,4 +106,31 @@ public class AccountRespository implements IFRespository<Account> {
             throw new RuntimeException(e);
         }
     }
+
+    public void login(String username, String password){
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE account_id=? AND password=?";
+        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
+            ppsm.setString(1, username);
+            ppsm.setString(2, password);
+            ResultSet rs = ppsm.executeQuery();
+            if(rs.next()){
+                Account account = new Account();
+                account.setAccountId(rs.getString("account_id"));
+                account.setPassword(rs.getString("password"));
+                account.setEmail(rs.getString("email"));
+                account.setFullName(rs.getString("full_name"));
+                account.setPhone(rs.getString("phone"));
+                account.setStatus(rs.getInt("status"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void getRoleAccount(String accountId){
+        String sql = "SELECT * FROM grant_access WHERE account_id=?";
+        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
+
+        }
+    }
 }

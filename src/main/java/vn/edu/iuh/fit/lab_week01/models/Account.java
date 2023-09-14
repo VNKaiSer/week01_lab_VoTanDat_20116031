@@ -1,18 +1,21 @@
 package vn.edu.iuh.fit.lab_week01.models;
 
+import java.util.Map;
+
 public class Account {
     private String accountId;
     private String fullName;
     private String password;
     private String email;
     private String phone;
-    private int status;
+    private STATUS status;
 
     public Account() {
         this.accountId = "no account";
     }
 
-    public Account(String accountId, String fullName, String password, String email, String phone, int status) {
+
+    public Account(String accountId, String fullName, String password, String email, String phone, STATUS status) {
         this.accountId = accountId;
         this.fullName = fullName;
         this.password = password;
@@ -63,11 +66,11 @@ public class Account {
     }
 
     public int getStatus() {
-        return status;
+        return status.getStatus();
     }
 
     public void setStatus(int status) {
-        this.status = status;
+        this.status.setStatus(status);
     }
 
     @Override

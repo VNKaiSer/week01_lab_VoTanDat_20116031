@@ -7,8 +7,9 @@
         <servlet-name>controllerServlet</servlet-name>
         <servlet-class>vn.edu.iuh.fit.lab_week01.controller.ControllerServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>controllerServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/web</url-pattern>
     </servlet-mapping>
 </web-app>
