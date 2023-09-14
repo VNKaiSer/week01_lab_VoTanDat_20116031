@@ -7,6 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static vn.edu.iuh.fit.lab_week01.constant.Constant.MAPISGRANT;
+
 public class GrantAccessRespository implements IFRespository<GrantAccess> {
     private final String TABLE_NAME = "grant_access";
     private Connection connection;
@@ -20,7 +22,7 @@ public class GrantAccessRespository implements IFRespository<GrantAccess> {
         try(PreparedStatement ppsm = connection.prepareStatement(sql)){
             ppsm.setString(1, object.getRoleId());
             ppsm.setString(2, object.getAccountId());
-            ppsm.setInt(3, object.getIsGrant());
+            ppsm.setInt(3, MAPISGRANT.get(object.getIsGrant()));
             ppsm.setString(4, object.getNote());
             int rowsAffected = ppsm.executeUpdate();
             return rowsAffected > 0;

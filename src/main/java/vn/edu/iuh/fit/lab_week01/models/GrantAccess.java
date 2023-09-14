@@ -1,5 +1,7 @@
 package vn.edu.iuh.fit.lab_week01.models;
 
+import static vn.edu.iuh.fit.lab_week01.constant.Constant.MAPISGRANT;
+
 public class GrantAccess {
     private String roleId;
     private String accountId;
@@ -31,8 +33,8 @@ public class GrantAccess {
         this.accountId = accountId;
     }
 
-    public ISGRANT getIsGrant() {
-        return isGrant
+    public int getIsGrant() {
+        return MAPISGRANT.get(isGrant);
     }
 
     public String getNote() {
@@ -42,6 +44,7 @@ public class GrantAccess {
     public void setNote(String note) {
         this.note = note;
     }
+
 
     public void setIsGrant(ISGRANT isGrant) {
         this.isGrant = isGrant;

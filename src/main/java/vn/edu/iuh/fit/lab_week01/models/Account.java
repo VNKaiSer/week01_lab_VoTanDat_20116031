@@ -2,6 +2,8 @@ package vn.edu.iuh.fit.lab_week01.models;
 
 import java.util.Map;
 
+import static vn.edu.iuh.fit.lab_week01.constant.Constant.MAPSTATUS;
+
 public class Account {
     private String accountId;
     private String fullName;
@@ -66,11 +68,11 @@ public class Account {
     }
 
     public int getStatus() {
-        return status.getStatus();
+        return MAPSTATUS.get(status);
     }
 
     public void setStatus(int status) {
-        this.status.setStatus(status);
+        this.status = STATUS.values()[status];
     }
 
     @Override
