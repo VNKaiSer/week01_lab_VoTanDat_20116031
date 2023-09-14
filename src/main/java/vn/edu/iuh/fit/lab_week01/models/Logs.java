@@ -35,7 +35,7 @@ public class Logs {
         this.acountId = acountId;
     }
 
-    public Date getLogInDate() {
+    public String getLogInDate() {
         return logInDate;
     }
 
@@ -43,7 +43,7 @@ public class Logs {
         this.logInDate = logInDate;
     }
 
-    public Date getLogOutDate() {
+    public String getLogOutDate() {
         return logOutDate;
     }
 

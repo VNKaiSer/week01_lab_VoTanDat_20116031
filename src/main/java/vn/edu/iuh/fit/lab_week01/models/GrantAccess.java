@@ -31,8 +31,8 @@ public class GrantAccess {
         this.accountId = accountId;
     }
 
-    public ISGRANT getIsGrant() {
-        return isGrant;
+    public int getIsGrant() {
+        return isGrant.getValue();
     }
 
     public String getNote() {

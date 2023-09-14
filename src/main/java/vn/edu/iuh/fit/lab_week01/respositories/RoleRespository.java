@@ -11,6 +11,10 @@ public class RoleRespository implements IFRespository<Role> {
     private Connection connection;
     private final String TABLE_NAME = "role";
 
+    public RoleRespository() throws Exception {
+        connection = DBConnect.getInsance().getConn();
+    }
+
     @Override
     public boolean insert(Role object) throws SQLException {
         String sql = "INSERT " + TABLE_NAME + "\n" + "VALUES(?,?,?)";
