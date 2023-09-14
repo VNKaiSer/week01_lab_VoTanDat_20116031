@@ -36,7 +36,7 @@ public class Logs {
     }
 
     public String getLogInDate() {
-        return logInDate;
+        return String.valueOf(logInDate);
     }
 
     public void setLogInDate(Date logInDate) {
@@ -44,7 +44,7 @@ public class Logs {
     }
 
     public String getLogOutDate() {
-        return logOutDate;
+        return String.valueOf(logOutDate);
     }
 
     public void setLogOutDate(Date logOutDate) {
