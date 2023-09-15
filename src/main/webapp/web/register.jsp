@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
+    <title>Register Page</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
 
 </head>
@@ -18,9 +18,15 @@
             <label for="password" class="block font-medium text-gray-700">Password</label>
             <input type="password" id="password" name="password" class="border p-2 rounded w-full px-5" required>
         </div>
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>
+        <div class="mb-4">
+            <label for="password" class="block font-medium text-gray-700">Re-Password</label>
+            <input type="repassword" id="repassword" name="password" class="border p-2 rounded w-full px-5" required>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Register</button>
         <br>
-        <span>If you don't have account <a class="text-blue-500 cursor-pointer" href="/web?action=register"> Click here to register </a></span>
+        <span>If you have account <a class="text-blue-500 cursor-pointer" href="/web?action=login"> Click here to login </a></span>
+        <br>
+        <span class="text-sm text-gray-500 mt-4 cursor-pointer">Forget password</span>
     </form>
 </div>
 </body>

@@ -1,9 +1,11 @@
 package vn.edu.iuh.fit.lab_week01.services.impl;
 
+import vn.edu.iuh.fit.lab_week01.models.Account;
 import vn.edu.iuh.fit.lab_week01.respositories.AccountRespository;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class AccountServiceImpl implements AccountService {
     private AccountRespository accountRespository;
@@ -19,5 +21,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean register(String username, String password, String email, String phone) {
         return false;
+    }
+
+    @Override
+    public List<Account> getAllAccount() throws SQLException {
+        return accountRespository.getALL();
     }
 }

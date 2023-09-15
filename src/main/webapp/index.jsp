@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JSP - Hello World</title>
+  <title>Home page</title>
 </head>
 <body>
-<h1><%= "Hello World!" %></h1>
+  <h1><%= "Võ Tấn Đạt - 20116031 - LAB WEEK01!" %></h1>
+  <a href="/web?action=login" >Click here to countine</a>
 <br/>
 </body>
 </html>
