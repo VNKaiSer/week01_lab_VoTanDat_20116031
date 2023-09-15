@@ -27,4 +27,9 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAllAccount() throws SQLException {
         return accountRespository.getALL();
     }
+
+    @Override
+    public Account getAccountById(String id) throws SQLException {
+        return accountRespository.getOne(id);
+    }
 }

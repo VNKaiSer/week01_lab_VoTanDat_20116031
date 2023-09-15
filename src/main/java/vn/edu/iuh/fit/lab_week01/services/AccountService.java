@@ -11,5 +11,7 @@ public interface AccountService {
 
      List<Account> getAllAccount() throws SQLException;
 
+     Account getAccountById(String id) throws SQLException;
+
 
 }

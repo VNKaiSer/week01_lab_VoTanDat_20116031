@@ -38,14 +38,43 @@ public class ControllerServlet extends HttpServlet {
                 out.println("</body></html>");
                 break;
             case "login":
-              RequestDispatcher requestDispatcher = req.getRequestDispatcher("/web/login.jsp");
-              requestDispatcher.include(req,resp);
+              req.getRequestDispatcher("/web/login.jsp").include(req,resp);
               break;
             case "register":
-                RequestDispatcher requestDispatcher1 = req.getRequestDispatcher("/web/register.jsp");
-                requestDispatcher1.include(req,resp);
+                req.getRequestDispatcher("/web/register.jsp").include(req,resp);
                 break;
+            case "edit-account":
+                try {
+                    AccountService accountService = new AccountServiceImpl();
+                    Account account = accountService.getAccountById(req.getParameter("accountId"));
+                    if (account != null){
+                        req.setAttribute("account", account);
+                        req.getRequestDispatcher("/account/edit-account.jsp").include(req,resp);
+                    } else {
+                        resp.sendRedirect(env.appName+"/web/dashboard.jsp");
+                        out.println("<script type=\"text/javascript\">");
+                        out.println("alert('Not found account id = "+ req.getParameter("accountId")+"!');");
+                        out.println("</script>");
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+                case  "list-account":
+                    AccountService accountService = null;
+                    try {
+                        accountService = new AccountServiceImpl();
+                        List<Account> accounts = accountService.getAllAccount();
+                        req.setAttribute("accounts", accounts);
+                        req.getRequestDispatcher("/web/dashboard.jsp").forward(req, resp);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+                    break;
             }
+
         }else {
             resp.setContentType("text/html");
             out.println("<html><body>");

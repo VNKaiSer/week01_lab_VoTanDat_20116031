@@ -13,4 +13,10 @@
         <url-pattern>/web</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>controllerServlet</servlet-name>
+        <url-pattern>/list-account</url-pattern>
+    </servlet-mapping>
+
+
 </web-app>
