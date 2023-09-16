@@ -1,17 +1,16 @@
 package vn.edu.iuh.fit.lab_week01.respositories;
-
 import vn.edu.iuh.fit.lab_week01.models.Role;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleRespository implements IFRespository<Role> {
-    
+public class RoleRepository implements IFRespository<Role> {
+
     private Connection connection;
     private final String TABLE_NAME = "role";
 
-    public RoleRespository() throws Exception {
+     public RoleRepository() throws Exception {
         connection = DBConnect.getInsance().getConn();
     }
 
@@ -85,6 +84,32 @@ public class RoleRespository implements IFRespository<Role> {
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Retrieves the roles associated with a given account ID.
+     *
+     * @param  accountId  the ID of the account
+     * @return            a list of role names associated with the account
+     * @throws SQLException if there is an error executing the SQL query
+     */
+    public List<String> getRolesFromAccount(String accountId) throws SQLException {
+        String sql = "SELECT role_name \n" +
+                "FROM role\n" +
+                "WHERE role_id IN(\n" +
+                "\tSELECT role_id \n" +
+                "\tFROM grant_access\n" +
+                "\tWHERE account_id = ?" +
+                ")";
+        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
+            ppsm.setString(1, accountId);
+            ResultSet rs = ppsm.executeQuery();
+            List<String> roles = new ArrayList<>();
+            while (rs.next()){
+                roles.add(rs.getString("role_name"));
+            }
+            return roles;
         }
     }
 }

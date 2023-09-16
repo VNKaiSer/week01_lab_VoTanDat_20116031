@@ -1,31 +1,28 @@
 package vn.edu.iuh.fit.lab_week01.controller;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-import vn.edu.iuh.fit.lab_week01.constant.UIClass;
 import vn.edu.iuh.fit.lab_week01.constant.env;
-import vn.edu.iuh.fit.lab_week01.models.Account;
-import vn.edu.iuh.fit.lab_week01.models.STATUS;
+import vn.edu.iuh.fit.lab_week01.models.*;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
+import vn.edu.iuh.fit.lab_week01.services.GrandAccessService;
+import vn.edu.iuh.fit.lab_week01.services.RoleService;
 import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
+import vn.edu.iuh.fit.lab_week01.services.impl.GrandAccessServiceImpl;
+import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "ControllerServlet")
 public class ControllerServlet extends HttpServlet {
+    HttpSession session;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -48,10 +45,19 @@ public class ControllerServlet extends HttpServlet {
                     handleListAccount(req, resp);
                     break;
                 case "create-account":
-                    forwardToPage("/account/create-account.jsp", req, resp);
+                    forwardToPage("/web/dashboard.jsp", req, resp);
                     break;
                 case "delete-account":
                     handleDeleteAccount(req, resp);
+                    break;
+                case "list-role":
+                    handleListRole(req, resp );
+                    break;
+                case "manager-role":
+                    handleManagerRole(req, resp);
+                    break;
+                case "user-information":
+                    handleUserInformation(req, resp);
                     break;
             }
         } else {
@@ -59,6 +65,22 @@ public class ControllerServlet extends HttpServlet {
         }} catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleUserInformation(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        Account account = (Account) session.getAttribute("account");
+        req.setAttribute("account", account);
+        forwardToPage("/web/home.jsp", req, resp);
+    }
+
+    private void handleManagerRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        RoleService roleService = new RoleServiceImpl();
+        AccountService accountService = new AccountServiceImpl();
+        List<Role> roles = roleService.getAllRole();
+        List<Account> accounts = accountService.getAllAccount();
+        req.setAttribute("accounts", accounts);
+        req.setAttribute("roles", roles);
+        forwardToPage("/web/dashboard.jsp", req, resp);
     }
 
     private void sendHelloResponse(HttpServletResponse resp) throws IOException {
@@ -82,7 +104,7 @@ public class ControllerServlet extends HttpServlet {
 
             if (account != null) {
                 req.setAttribute("account", account);
-                forwardToPage("/account/edit-account.jsp", req, resp);
+                forwardToPage("/web/dashboard.jsp", req, resp);
             } else {
                 sendErrorMessageAndRedirect(resp, "Not found account id = " + accountId);
             }
@@ -128,13 +150,12 @@ public class ControllerServlet extends HttpServlet {
         out.println("</body></html>");
     }
 
-
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         try {
             AccountService accountService = new AccountServiceImpl();
+            GrandAccessService grandAccessService = new GrandAccessServiceImpl();
 
         if (action != null) {
             switch (action) {
@@ -150,6 +171,11 @@ public class ControllerServlet extends HttpServlet {
                 case "create-account":
                     handleCreateAccount(req, resp, accountService);
                     break;
+                case "manager-role":
+                    handleManagerRolePost(req, resp, grandAccessService);
+                    break;
+                case "user-information":
+                    handleEditUserInformation(req, resp, accountService);
                 default:
                     sendHelloResponse(resp);
                     break;
@@ -161,6 +187,37 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
+    private void handleEditUserInformation(HttpServletRequest req, HttpServletResponse resp, AccountService accountService) throws Exception {
+        Account account = (Account) session.getAttribute("account");
+        account.setFullName(req.getParameter("name"));
+        account.setEmail(req.getParameter("email"));
+        account.setPhone(req.getParameter("phone"));
+        accountService.editAccount(account);
+        session.removeAttribute("account");
+        session.setAttribute("account", account);
+        resp.sendRedirect(env.appName + "/web?action=user-information");
+
+    }
+
+    private void handleManagerRolePost(HttpServletRequest req, HttpServletResponse resp, GrandAccessService grandAccessService) throws Exception {
+        String accountId = req.getParameter("account");
+        String roleId = req.getParameter("role");
+        String note = req.getParameter("note");
+        String status = req.getParameter("status");
+        if (status.equals("1")) {
+            grandAccessService.insertGrandAccess(new GrantAccess(roleId,accountId , ISGRANT.ENABLED, note));
+        } else {
+            grandAccessService.insertGrandAccess(new GrantAccess(roleId, accountId, ISGRANT.DISABLED, note));
+        }
+        sendErrorMessageAndRedirect(resp, "Phân quyền không thành công");
+    }
+
+    private void handleListRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        RoleService roleService = new RoleServiceImpl();
+        List<Role> roles = roleService.getAllRole();
+        req.setAttribute("roles", roles);
+        forwardToPage("/web/dashboard.jsp", req, resp);
+    }
 
 
     private void handleRegister(HttpServletRequest req, HttpServletResponse resp) {
@@ -170,20 +227,20 @@ public class ControllerServlet extends HttpServlet {
     private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
-        HttpSession session = req.getSession();
+        session = req.getSession();
         session.setAttribute("username", username);
         session.setAttribute("timeLogin", System.currentTimeMillis());
         AccountService accountService = new AccountServiceImpl();
 
         try {
             int status = accountService.login(username, password);
-
+            System.out.println(status);
             switch (status) {
                 case 1:
                     handleAdminLogin(req, resp);
                     break;
                 case 0:
-                    handleUserLogin(resp);
+                    handleUserLogin(req, resp);
                     break;
                 case -1:
                 case -2:
@@ -203,8 +260,14 @@ public class ControllerServlet extends HttpServlet {
         sendSuccessMessage(resp, "Welcome admin!");
     }
 
-    private void handleUserLogin(HttpServletResponse resp) throws IOException {
-        resp.sendRedirect(env.appName + "/web/home.jsp");
+    private void handleUserLogin( HttpServletRequest req, HttpServletResponse resp) throws Exception {
+
+        AccountService accountService = new AccountServiceImpl();
+        Account account = accountService.getAccountById(req.getParameter("username"));
+        session = req.getSession();
+        session.setAttribute("account", account);
+        System.out.println(session.getAttribute("account"));
+        forwardToPage("/web/home.jsp", req, resp);
         sendSuccessMessage(resp, "Welcome user!");
     }
 

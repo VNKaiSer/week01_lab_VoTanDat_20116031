@@ -114,7 +114,7 @@ public class AccountRespository implements IFRespository<Account> {
 
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM " + TABLE_NAME + " WHERE account_id=?";
+        String sql = "UPDATE " + TABLE_NAME + " SET STATUS=-1 WHERE account_id=?";
         try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
             ppsm.setString(1, id);
             int rowsAffected = ppsm.executeUpdate();
@@ -174,12 +174,31 @@ public class AccountRespository implements IFRespository<Account> {
                 "WHERE role_id IN (\n" +
                 "\tSELECT role_id \n" +
                 "\tFROM grant_access\n" +
-                "\tWHERE is_grant = '1' and account_id = ?\n" +
+                "\tWHERE account_id = ?\n and is_grant=1" +
                 ")";
         try(PreparedStatement ppsm = connection.prepareStatement(sql)){
             ppsm.setString(1, accountId);
             ResultSet rs = ppsm.executeQuery();
-            return rs.next();
+            return rs.next() && rs.getString("role_name").equals("admin");
+        }
+    }
+
+    public List<String> getAccountsFromRole(String accountId) throws SQLException {
+        String sql = "SELECT account_id \n" +
+                "FROM account\n" +
+                "WHERE account_id IN(\n" +
+                "\tSELECT account_id \n" +
+                "\tFROM grant_access\n" +
+                "\tWHERE role_id = \"admin\"\n" +
+                ")";
+        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
+            ppsm.setString(1, accountId);
+            ResultSet rs = ppsm.executeQuery();
+            List<String> accounts = new ArrayList<>();
+            while (rs.next()){
+                accounts.add(rs.getString("account_id"));
+            }
+            return accounts;
         }
     }
 }

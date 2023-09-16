@@ -1,10 +1,6 @@
-<%@ page import="java.util.List" %>
-<%@ page import="vn.edu.iuh.fit.lab_week01.models.Account" %>
-<%@ page import="vn.edu.iuh.fit.lab_week01.models.STATUS" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,52 +17,28 @@
             <li><a href="${pageContext.request.contextPath}/web?action=list-account" class="block py-2">Danh sách tài khoản</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=create-account" class="block py-2">Thêm tài khoản</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=list-role" class="block py-2">Danh sách quyền</a></li>
-            <li><a href="${pageContext.request.contextPath}/web?action=add-role" class="block py-2">Cấp quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=manager-role" class="block py-2">Cấp quyền</a></li>
         </ul>
     </aside>
 
     <!-- Nội dung chính -->
     <main class="bg-white w-4/5 p-4">
-        <h1 class="text-2xl font-semibold mb-4">Danh sách tài khoản</h1>
-        <table class="w-full">
-            <thead>
-            <tr>
-                <th class="border p-2">ID</th>
-                <th class="border p-2">Tên</th>
-                <th class="border p-2">Email</th>
-                <th class="border p-2">Số điện thoại</th>
-                <th class="border p-2">Trạng thái</th>
-                <th class="border p-2">Sửa</th>
-                <th class="border p-2">Xóa</th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-                List<Account> accountList = (List<Account>) request.getAttribute("accounts");
-                for (Account acc : accountList) {
-                    STATUS status;
-                    if (acc.getStatus() == 0){
-                        status = STATUS.DEACTIVE;
-                    } else if (acc.getStatus() == 1) {
-                        status = STATUS.ACTIVE;
-                    } else {
-                        status = STATUS.DELETED;
+        <%
+                String action = request.getParameter("action");
+                if (action != null) {
+                    if (action.equals("list-account")) {
+                    %><jsp:include page="/account/list-account.jsp" /><%
+                    } else if (action.equals("edit-account")) {
+                        %><jsp:include page="/account/edit-account.jsp" /><%
+                    } else if (action.equals("create-account")) {
+                        %><jsp:include page="/account/create-account.jsp" /><%
+                    } else if (action.equals("list-role")) {
+                        %><jsp:include page="/role/list-role.jsp" /><%
+                    } else if (action.equals("manager-role")) {
+                        %><jsp:include page="/role/manager-role.jsp" /><%
                     }
-            %>
-                <tr>
-                    <td class="border p-2"><%= acc.getAccountId() %></td>
-                    <td class="border p-2"><%= acc.getFullName() %></td>
-                    <td class="border p-2"><%= acc.getEmail() %></td>
-                    <td class="border p-2"><%= acc.getPhone() %></td>
-                    <td class="border p-2"><%= status %></td>
-                    <td class="border p-2"><a href="${pageContext.request.contextPath}/web?action=edit-account&accountId=<%= acc.getAccountId() %>"><i class="fas fa-edit"></i></a></td>
-                    <td class="border p-2"><a href="javascript:void(0);" data-account-id="<%=acc.getAccountId()%>" class="delete-button"><i class="fas fa-trash-alt"></i></a></td>
-                </tr>
-            <%
-                }
-            %>
-            </tbody>
-        </table>
+        }
+        %>
     </main>
 </div>
 </body>

@@ -18,11 +18,11 @@ public class GrantAccessRespository implements IFRespository<GrantAccess> {
     }
     @Override
     public boolean insert(GrantAccess object) throws SQLException {
-        String sql = "INSERT " + TABLE_NAME + "\n" + "VALUES(?,?,?)";
+        String sql = "INSERT " + TABLE_NAME + "\n" + "VALUES(?,?,?,?)";
         try(PreparedStatement ppsm = connection.prepareStatement(sql)){
             ppsm.setString(1, object.getRoleId());
             ppsm.setString(2, object.getAccountId());
-            ppsm.setInt(3, MAPISGRANT.get(object.getIsGrant()));
+            ppsm.setInt(3, object.getIsGrant());
             ppsm.setString(4, object.getNote());
             int rowsAffected = ppsm.executeUpdate();
             return rowsAffected > 0;
