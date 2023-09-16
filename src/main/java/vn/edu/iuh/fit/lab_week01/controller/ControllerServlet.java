@@ -12,9 +12,12 @@ import jakarta.websocket.Session;
 import vn.edu.iuh.fit.lab_week01.constant.UIClass;
 import vn.edu.iuh.fit.lab_week01.constant.env;
 import vn.edu.iuh.fit.lab_week01.models.Account;
+import vn.edu.iuh.fit.lab_week01.models.Role;
 import vn.edu.iuh.fit.lab_week01.models.STATUS;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
+import vn.edu.iuh.fit.lab_week01.services.RoleService;
 import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
+import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
 
 import java.io.IOException;
@@ -48,11 +51,13 @@ public class ControllerServlet extends HttpServlet {
                     handleListAccount(req, resp);
                     break;
                 case "create-account":
-                    forwardToPage("/account/create-account.jsp", req, resp);
+                    forwardToPage("/web/dashboard.jsp", req, resp);
                     break;
                 case "delete-account":
                     handleDeleteAccount(req, resp);
                     break;
+                case "list-role":
+                    handleListRole(req, resp );
             }
         } else {
             sendHelloResponse(resp);
@@ -82,7 +87,7 @@ public class ControllerServlet extends HttpServlet {
 
             if (account != null) {
                 req.setAttribute("account", account);
-                forwardToPage("/account/edit-account.jsp", req, resp);
+                forwardToPage("/web/dashboard.jsp", req, resp);
             } else {
                 sendErrorMessageAndRedirect(resp, "Not found account id = " + accountId);
             }
@@ -128,13 +133,12 @@ public class ControllerServlet extends HttpServlet {
         out.println("</body></html>");
     }
 
-
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         try {
             AccountService accountService = new AccountServiceImpl();
+            RoleService roleService = new RoleServiceImpl();
 
         if (action != null) {
             switch (action) {
@@ -150,6 +154,8 @@ public class ControllerServlet extends HttpServlet {
                 case "create-account":
                     handleCreateAccount(req, resp, accountService);
                     break;
+                case "list-role":
+//                    handleListRole(req, resp);
                 default:
                     sendHelloResponse(resp);
                     break;
@@ -161,6 +167,12 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
+    private void handleListRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        RoleService roleService = new RoleServiceImpl();
+        List<Role> roles = roleService.getAllRole();
+        req.setAttribute("roles", roles);
+        forwardToPage("/web/dashboard.jsp", req, resp);
+    }
 
 
     private void handleRegister(HttpServletRequest req, HttpServletResponse resp) {

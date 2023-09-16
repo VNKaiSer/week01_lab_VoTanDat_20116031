@@ -1,17 +1,18 @@
 package vn.edu.iuh.fit.lab_week01.respositories;
 
+import jakarta.inject.Inject;
 import vn.edu.iuh.fit.lab_week01.models.Role;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleRespository implements IFRespository<Role> {
-    
+public class RoleRepository implements IFRespository<Role> {
+
     private Connection connection;
     private final String TABLE_NAME = "role";
 
-    public RoleRespository() throws Exception {
+     public RoleRepository() throws Exception {
         connection = DBConnect.getInsance().getConn();
     }
 
