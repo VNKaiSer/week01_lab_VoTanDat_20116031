@@ -114,7 +114,7 @@ public class AccountRespository implements IFRespository<Account> {
 
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM " + TABLE_NAME + " WHERE account_id=?";
+        String sql = "UPDATE " + TABLE_NAME + " SET STATUS=-1 WHERE account_id=?";
         try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
             ppsm.setString(1, id);
             int rowsAffected = ppsm.executeUpdate();

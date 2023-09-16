@@ -17,7 +17,7 @@
             <li><a href="${pageContext.request.contextPath}/web?action=list-account" class="block py-2">Danh sách tài khoản</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=create-account" class="block py-2">Thêm tài khoản</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=list-role" class="block py-2">Danh sách quyền</a></li>
-            <li><a href="${pageContext.request.contextPath}/web?action=add-role" class="block py-2">Cấp quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=manager-role" class="block py-2">Cấp quyền</a></li>
         </ul>
     </aside>
 
@@ -34,6 +34,8 @@
                         %><jsp:include page="/account/create-account.jsp" /><%
                     } else if (action.equals("list-role")) {
                         %><jsp:include page="/role/list-role.jsp" /><%
+                    } else if (action.equals("manager-role")) {
+                        %><jsp:include page="/role/manager-role.jsp" /><%
                     }
         }
         %>

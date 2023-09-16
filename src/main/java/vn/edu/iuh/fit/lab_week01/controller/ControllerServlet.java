@@ -11,21 +11,19 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.Session;
 import vn.edu.iuh.fit.lab_week01.constant.UIClass;
 import vn.edu.iuh.fit.lab_week01.constant.env;
-import vn.edu.iuh.fit.lab_week01.models.Account;
-import vn.edu.iuh.fit.lab_week01.models.Role;
-import vn.edu.iuh.fit.lab_week01.models.STATUS;
+import vn.edu.iuh.fit.lab_week01.models.*;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
+import vn.edu.iuh.fit.lab_week01.services.GrandAccessService;
 import vn.edu.iuh.fit.lab_week01.services.RoleService;
 import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
+import vn.edu.iuh.fit.lab_week01.services.impl.GrandAccessServiceImpl;
 import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "ControllerServlet")
 public class ControllerServlet extends HttpServlet {
@@ -58,12 +56,26 @@ public class ControllerServlet extends HttpServlet {
                     break;
                 case "list-role":
                     handleListRole(req, resp );
+                    break;
+                case "manager-role":
+                    handleManagerRole(req, resp);
+                    break;
             }
         } else {
             sendHelloResponse(resp);
         }} catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleManagerRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        RoleService roleService = new RoleServiceImpl();
+        AccountService accountService = new AccountServiceImpl();
+        List<Role> roles = roleService.getAllRole();
+        List<Account> accounts = accountService.getAllAccount();
+        req.setAttribute("accounts", accounts);
+        req.setAttribute("roles", roles);
+        forwardToPage("/web/dashboard.jsp", req, resp);
     }
 
     private void sendHelloResponse(HttpServletResponse resp) throws IOException {
@@ -138,7 +150,7 @@ public class ControllerServlet extends HttpServlet {
         String action = req.getParameter("action");
         try {
             AccountService accountService = new AccountServiceImpl();
-            RoleService roleService = new RoleServiceImpl();
+            GrandAccessService grandAccessService = new GrandAccessServiceImpl();
 
         if (action != null) {
             switch (action) {
@@ -154,8 +166,9 @@ public class ControllerServlet extends HttpServlet {
                 case "create-account":
                     handleCreateAccount(req, resp, accountService);
                     break;
-                case "list-role":
-//                    handleListRole(req, resp);
+                case "manager-role":
+                    handleManagerRolePost(req, resp, grandAccessService);
+                    break;
                 default:
                     sendHelloResponse(resp);
                     break;
@@ -165,6 +178,19 @@ public class ControllerServlet extends HttpServlet {
         }}catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleManagerRolePost(HttpServletRequest req, HttpServletResponse resp, GrandAccessService grandAccessService) throws Exception {
+        String accountId = req.getParameter("account");
+        String roleId = req.getParameter("role");
+        String note = req.getParameter("note");
+        String status = req.getParameter("status");
+        if (status.equals("1")) {
+            grandAccessService.insertGrandAccess(new GrantAccess(roleId,accountId , ISGRANT.ENABLED, note));
+        } else {
+            grandAccessService.insertGrandAccess(new GrantAccess(roleId, accountId, ISGRANT.DISABLED, note));
+        }
+        sendErrorMessageAndRedirect(resp, "Phân quyền không thành công");
     }
 
     private void handleListRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
