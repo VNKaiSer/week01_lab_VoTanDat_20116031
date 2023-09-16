@@ -60,7 +60,7 @@
                     <td class="border p-2"><%= acc.getPhone() %></td>
                     <td class="border p-2"><%= status %></td>
                     <td class="border p-2"><a href="${pageContext.request.contextPath}/web?action=edit-account&accountId=<%= acc.getAccountId() %>"><i class="fas fa-edit"></i></a></td>
-                    <td class="border p-2"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
+                    <td class="border p-2"><a href="javascript:void(0);" data-account-id="<%=acc.getAccountId()%>" class="delete-button"><i class="fas fa-trash-alt"></i></a></td>
                 </tr>
             <%
                 }
@@ -70,4 +70,18 @@
     </main>
 </div>
 </body>
+<script>
+    const deleteButtons = document.querySelectorAll(".delete-button");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const accountId = button.getAttribute("data-account-id");
+            const confirmation = confirm("Bạn có chắc chắn muốn xoá tài khoản này?");
+
+            if (confirmation) {
+                window.location.href = "web?action=delete-account&accountId=" + accountId;
+            }
+        });
+    });
+</script>
 </html>

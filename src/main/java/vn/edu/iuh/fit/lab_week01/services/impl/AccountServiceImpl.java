@@ -43,5 +43,10 @@ public class AccountServiceImpl implements AccountService {
         return accountRespository.insert(account);
     }
 
+    @Override
+    public void deleteAccount(String accountId) {
+        accountRespository.delete(accountId);
+    }
+
 
 }

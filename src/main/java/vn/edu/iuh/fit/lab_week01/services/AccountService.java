@@ -17,4 +17,6 @@ public interface AccountService {
 
 
     boolean createAccount(Account account);
+
+    void deleteAccount(String accountId);
 }
