@@ -1,15 +1,11 @@
 package vn.edu.iuh.fit.lab_week01.controller;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-import vn.edu.iuh.fit.lab_week01.constant.UIClass;
 import vn.edu.iuh.fit.lab_week01.constant.env;
 import vn.edu.iuh.fit.lab_week01.models.*;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
@@ -22,11 +18,11 @@ import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.*;
 
 @WebServlet(name = "ControllerServlet")
 public class ControllerServlet extends HttpServlet {
+    HttpSession session;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -60,12 +56,21 @@ public class ControllerServlet extends HttpServlet {
                 case "manager-role":
                     handleManagerRole(req, resp);
                     break;
+                case "user-information":
+                    handleUserInformation(req, resp);
+                    break;
             }
         } else {
             sendHelloResponse(resp);
         }} catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleUserInformation(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        Account account = (Account) session.getAttribute("account");
+        req.setAttribute("account", account);
+        forwardToPage("/web/home.jsp", req, resp);
     }
 
     private void handleManagerRole(HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -169,6 +174,8 @@ public class ControllerServlet extends HttpServlet {
                 case "manager-role":
                     handleManagerRolePost(req, resp, grandAccessService);
                     break;
+                case "user-information":
+                    handleEditUserInformation(req, resp, accountService);
                 default:
                     sendHelloResponse(resp);
                     break;
@@ -178,6 +185,18 @@ public class ControllerServlet extends HttpServlet {
         }}catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleEditUserInformation(HttpServletRequest req, HttpServletResponse resp, AccountService accountService) throws Exception {
+        Account account = (Account) session.getAttribute("account");
+        account.setFullName(req.getParameter("name"));
+        account.setEmail(req.getParameter("email"));
+        account.setPhone(req.getParameter("phone"));
+        accountService.editAccount(account);
+        session.removeAttribute("account");
+        session.setAttribute("account", account);
+        resp.sendRedirect(env.appName + "/web?action=user-information");
+
     }
 
     private void handleManagerRolePost(HttpServletRequest req, HttpServletResponse resp, GrandAccessService grandAccessService) throws Exception {
@@ -208,20 +227,20 @@ public class ControllerServlet extends HttpServlet {
     private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
-        HttpSession session = req.getSession();
+        session = req.getSession();
         session.setAttribute("username", username);
         session.setAttribute("timeLogin", System.currentTimeMillis());
         AccountService accountService = new AccountServiceImpl();
 
         try {
             int status = accountService.login(username, password);
-
+            System.out.println(status);
             switch (status) {
                 case 1:
                     handleAdminLogin(req, resp);
                     break;
                 case 0:
-                    handleUserLogin(resp);
+                    handleUserLogin(req, resp);
                     break;
                 case -1:
                 case -2:
@@ -241,8 +260,14 @@ public class ControllerServlet extends HttpServlet {
         sendSuccessMessage(resp, "Welcome admin!");
     }
 
-    private void handleUserLogin(HttpServletResponse resp) throws IOException {
-        resp.sendRedirect(env.appName + "/web/home.jsp");
+    private void handleUserLogin( HttpServletRequest req, HttpServletResponse resp) throws Exception {
+
+        AccountService accountService = new AccountServiceImpl();
+        Account account = accountService.getAccountById(req.getParameter("username"));
+        session = req.getSession();
+        session.setAttribute("account", account);
+        System.out.println(session.getAttribute("account"));
+        forwardToPage("/web/home.jsp", req, resp);
         sendSuccessMessage(resp, "Welcome user!");
     }
 

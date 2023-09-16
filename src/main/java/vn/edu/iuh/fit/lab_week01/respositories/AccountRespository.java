@@ -174,12 +174,12 @@ public class AccountRespository implements IFRespository<Account> {
                 "WHERE role_id IN (\n" +
                 "\tSELECT role_id \n" +
                 "\tFROM grant_access\n" +
-                "\tWHERE is_grant = '1' and account_id = ?\n" +
+                "\tWHERE account_id = ?\n and is_grant=1" +
                 ")";
         try(PreparedStatement ppsm = connection.prepareStatement(sql)){
             ppsm.setString(1, accountId);
             ResultSet rs = ppsm.executeQuery();
-            return rs.next();
+            return rs.next() && rs.getString("role_name").equals("admin");
         }
     }
 
