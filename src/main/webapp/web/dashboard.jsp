@@ -18,9 +18,10 @@
     <aside class="bg-gray-800 text-white h-screen w-1/5 p-4">
         <h1 class="text-2xl font-semibold mb-4">Dashboard</h1>
         <ul>
-            <li><a href="#" class="block py-2">Danh sách tài khoản</a></li>
-            <li><a href="#" class="block py-2">Thêm tài khoản</a></li>
-            <li><a href="#" class="block py-2">Cấp quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=list-account" class="block py-2">Danh sách tài khoản</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=create-account" class="block py-2">Thêm tài khoản</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=list-role" class="block py-2">Danh sách quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=add-role" class="block py-2">Cấp quyền</a></li>
         </ul>
     </aside>
 

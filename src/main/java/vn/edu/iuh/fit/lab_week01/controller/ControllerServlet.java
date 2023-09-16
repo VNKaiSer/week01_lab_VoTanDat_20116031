@@ -74,6 +74,10 @@ public class ControllerServlet extends HttpServlet {
 
 
                     break;
+                case "create-account":
+                    req.getRequestDispatcher("/account/create-account.jsp").include(req,resp);
+                    break;
+
             }
 
         }else {
@@ -146,6 +150,13 @@ public class ControllerServlet extends HttpServlet {
                         throw new RuntimeException(e);
                     }
                     break;
+                case "create-account":
+                    try {
+                        create_account(req,resp,out);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
             }
         }else {
             resp.setContentType("text/html");
@@ -155,6 +166,37 @@ public class ControllerServlet extends HttpServlet {
 
         }
 
+    }
+
+    private void create_account(HttpServletRequest req, HttpServletResponse resp, PrintWriter out) throws Exception {
+        String accountId = req.getParameter("accountId");
+        String fullName = req.getParameter("fullname");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        int statusInt = Integer.parseInt(req.getParameter("status"));
+        STATUS status;
+        if (statusInt == 1){
+            status = STATUS.ACTIVE;
+        } else if(statusInt == 0){
+            status = STATUS.DEACTIVE;
+        } else {
+            status = STATUS.DELETED;
+        }
+
+        Account account = new Account(accountId, fullName, password, email, phone, status);
+        AccountService accountService = new AccountServiceImpl();
+        if (accountService.createAccount(account)){
+            resp.sendRedirect(env.appName+"/web?action=list-account");
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Create account successfully!');");
+            out.println("</script>");
+        } else {
+            resp.sendRedirect(env.appName+"/web?action=list-account");
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Create account failed!');");
+            out.println("</script>");
+        }
     }
 
     private void edit_account(HttpServletRequest req, HttpServletResponse resp, PrintWriter out) throws Exception {

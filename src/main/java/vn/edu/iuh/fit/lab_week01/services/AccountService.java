@@ -16,4 +16,5 @@ public interface AccountService {
      boolean editAccount(Account object);
 
 
+    boolean createAccount(Account account);
 }

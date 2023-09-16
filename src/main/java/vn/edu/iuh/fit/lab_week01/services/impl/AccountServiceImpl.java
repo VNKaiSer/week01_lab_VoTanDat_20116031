@@ -37,4 +37,11 @@ public class AccountServiceImpl implements AccountService {
     public boolean editAccount(Account object) {
         return accountRespository.update(object.getAccountId(), object);
     }
+
+    @Override
+    public boolean createAccount(Account account) {
+        return accountRespository.insert(account);
+    }
+
+
 }
