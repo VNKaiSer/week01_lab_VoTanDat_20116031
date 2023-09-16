@@ -182,4 +182,23 @@ public class AccountRespository implements IFRespository<Account> {
             return rs.next();
         }
     }
+
+    public List<String> getAccountsFromRole(String accountId) throws SQLException {
+        String sql = "SELECT account_id \n" +
+                "FROM account\n" +
+                "WHERE account_id IN(\n" +
+                "\tSELECT account_id \n" +
+                "\tFROM grant_access\n" +
+                "\tWHERE role_id = \"admin\"\n" +
+                ")";
+        try(PreparedStatement ppsm = connection.prepareStatement(sql)){
+            ppsm.setString(1, accountId);
+            ResultSet rs = ppsm.executeQuery();
+            List<String> accounts = new ArrayList<>();
+            while (rs.next()){
+                accounts.add(rs.getString("account_id"));
+            }
+            return accounts;
+        }
+    }
 }
