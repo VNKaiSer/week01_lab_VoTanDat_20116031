@@ -64,13 +64,21 @@ public class AccountRespository implements IFRespository<Account> {
         try (PreparedStatement ppsm = connection.prepareStatement(sql)) {
             ppsm.setString(1, id);
             ResultSet rs = ppsm.executeQuery();
+            STATUS status;
             if (rs.next()){
+                if (rs.getInt("status") == 0){
+                    status = STATUS.DEACTIVE;
+                } else if (rs.getInt("status") == 1) {
+                    status = STATUS.ACTIVE;
+                } else {
+                    status = STATUS.DELETED;
+                }
                 return new Account(rs.getString("account_id"),
                                     rs.getString("full_name"),
                                     rs.getString("password"),
                                     rs.getString("email"),
                                     rs.getString("phone"),
-                                    STATUS.values()[rs.getInt("status")]);
+                                    status);
             }
             return new Account();
         } catch (SQLException e) {
@@ -85,12 +93,20 @@ public class AccountRespository implements IFRespository<Account> {
         ResultSet rs = stm.executeQuery(sql);
         List<Account> accounts = new ArrayList<>();
         while (rs.next()){
+            STATUS status;
+            if (rs.getInt("status") == 0){
+                status = STATUS.DEACTIVE;
+            } else if (rs.getInt("status") == 1) {
+                status = STATUS.ACTIVE;
+            } else {
+                status = STATUS.DELETED;
+            }
             Account tmpAccount = new Account(rs.getString("account_id"),
                     rs.getString("full_name"),
                     rs.getString("password"),
                     rs.getString("email"),
                     rs.getString("phone"),
-                    STATUS.values()[rs.getInt("status")]);
+                    status);
             accounts.add(tmpAccount);
         }
         return accounts;

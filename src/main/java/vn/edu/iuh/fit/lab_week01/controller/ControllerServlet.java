@@ -12,6 +12,7 @@ import jakarta.websocket.Session;
 import vn.edu.iuh.fit.lab_week01.constant.UIClass;
 import vn.edu.iuh.fit.lab_week01.constant.env;
 import vn.edu.iuh.fit.lab_week01.models.Account;
+import vn.edu.iuh.fit.lab_week01.models.STATUS;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
 import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
 
@@ -99,7 +100,6 @@ public class ControllerServlet extends HttpServlet {
                 case 1:
                     List<Account> accounts = accountService.getAllAccount();
                     req.setAttribute("accounts", accounts);
-//                    resp.sendRedirect(env.appName+"/web/dashboard.jsp");
                     req.getRequestDispatcher("/web/dashboard.jsp").forward(req, resp);
 
                     out.println("<script type=\"text/javascript\">");
@@ -115,7 +115,7 @@ public class ControllerServlet extends HttpServlet {
                     break;
                 case -1:
                 case -2:
-                    resp.sendRedirect(env.appName+"/web/login.jsp");
+                    resp.sendRedirect(env.appName+"/web?action=login");
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('Username or password is incorrect!');");
                     out.println("</script>");
@@ -139,6 +139,13 @@ public class ControllerServlet extends HttpServlet {
                 case "register":
                     register(req,resp,out);
                     break;
+                case "edit-account":
+                    try {
+                        edit_account(req,resp,out);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
             }
         }else {
             resp.setContentType("text/html");
@@ -147,6 +154,40 @@ public class ControllerServlet extends HttpServlet {
             out.println("</body></html>");
 
         }
+
+    }
+
+    private void edit_account(HttpServletRequest req, HttpServletResponse resp, PrintWriter out) throws Exception {
+        String accountId = req.getParameter("accountId");
+        String fullName = req.getParameter("fullname");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        int statusInt = Integer.parseInt(req.getParameter("status"));
+        STATUS status;
+        if (statusInt == 1){
+            status = STATUS.ACTIVE;
+        } else if(statusInt == 0){
+            status = STATUS.DEACTIVE;
+        } else {
+            status = STATUS.DELETED;
+        }
+
+        Account account = new Account(accountId, fullName, password, email, phone, status);
+        AccountService accountService = new AccountServiceImpl();
+        if (accountService.editAccount(account)){
+            resp.sendRedirect(env.appName+"/web?action=list-account");
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Edit account successfully!');");
+            out.println("</script>");
+        }else {
+            resp.sendRedirect(env.appName+"/web?action=list-account");
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('Edit account failed!');");
+            out.println("</script>");
+        }
+
+
 
     }
 

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AccountServiceImpl implements AccountService {
-    private AccountRespository accountRespository;
+    private final AccountRespository accountRespository;
 
     public AccountServiceImpl() throws Exception {
         accountRespository = new AccountRespository();
@@ -31,5 +31,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccountById(String id) throws SQLException {
         return accountRespository.getOne(id);
+    }
+
+    @Override
+    public boolean editAccount(Account object) {
+        return accountRespository.update(object.getAccountId(), object);
     }
 }

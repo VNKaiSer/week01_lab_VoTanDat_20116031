@@ -13,5 +13,7 @@ public interface AccountService {
 
      Account getAccountById(String id) throws SQLException;
 
+     boolean editAccount(Account object);
+
 
 }
