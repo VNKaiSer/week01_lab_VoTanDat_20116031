@@ -7,11 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class LogRespository implements IFRespository<Logs> {
+public class LogRepository implements IFRespository<Logs> {
     private final String TABLE_NAME = "logs";
     private Connection connection;
 
-    public LogRespository() throws Exception {
+    public LogRepository() throws Exception {
         connection = DBConnect.getInsance().getConn();
     }
     @Override

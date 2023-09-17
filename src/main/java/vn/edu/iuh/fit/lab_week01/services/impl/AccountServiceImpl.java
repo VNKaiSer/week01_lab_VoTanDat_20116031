@@ -1,17 +1,17 @@
 package vn.edu.iuh.fit.lab_week01.services.impl;
 
 import vn.edu.iuh.fit.lab_week01.models.Account;
-import vn.edu.iuh.fit.lab_week01.respositories.AccountRespository;
+import vn.edu.iuh.fit.lab_week01.respositories.AccountRepository;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class AccountServiceImpl implements AccountService {
-    private final AccountRespository accountRespository;
+    private final AccountRepository accountRespository;
 
     public AccountServiceImpl() throws Exception {
-        accountRespository = new AccountRespository();
+        accountRespository = new AccountRepository();
     }
     @Override
     public int login(String username, String password) throws SQLException {

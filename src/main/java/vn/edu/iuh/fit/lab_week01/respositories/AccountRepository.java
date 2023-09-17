@@ -7,11 +7,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountRespository implements IFRespository<Account> {
+public class AccountRepository implements IFRespository<Account> {
     private Connection connection;
     private final String TABLE_NAME = "account";
 
-    public AccountRespository() throws Exception {
+    public AccountRepository() throws Exception {
         connection = DBConnect.getInsance().getConn();
     }
 

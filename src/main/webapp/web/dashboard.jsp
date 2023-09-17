@@ -18,6 +18,7 @@
             <li><a href="${pageContext.request.contextPath}/web?action=create-account" class="block py-2">Thêm tài khoản</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=list-role" class="block py-2">Danh sách quyền</a></li>
             <li><a href="${pageContext.request.contextPath}/web?action=manager-role" class="block py-2">Cấp quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=logout" class="block py-2">Đăng xuất</a></li>
         </ul>
     </aside>
 

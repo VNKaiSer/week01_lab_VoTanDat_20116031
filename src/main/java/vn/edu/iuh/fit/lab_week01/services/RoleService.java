@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface RoleService {
     List<Role> getAllRole() throws SQLException;
+
+    List<Role> getRolesFromAccount(String accountId) throws SQLException;
  }

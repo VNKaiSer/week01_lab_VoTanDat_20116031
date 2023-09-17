@@ -62,6 +62,13 @@ public class ControllerServlet extends HttpServlet {
                     case "user-information":
                         handleUserInformation(req, resp);
                         break;
+                    case "user-role":
+                        handleUserRoles(req, resp);
+                        break;
+                    case "logout":
+                        handleLogout(req, resp);
+                        break;
+                        
                 }
             } else {
                 sendHelloResponse(resp);
@@ -69,6 +76,22 @@ public class ControllerServlet extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleLogout(HttpServletRequest req, HttpServletResponse resp) {
+
+    }
+
+    private void handleUserRoles(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        RoleService roleService = new RoleServiceImpl();
+        Account account = (Account) session.getAttribute("account");
+        System.out.println("account = " + account);
+        List<Role> roles = roleService.getRolesFromAccount(account.getAccountId());
+        for (Role role : roles) {
+            System.out.println(role);
+        }
+        req.setAttribute("roles", roles);
+        forwardToPage("/web/home.jsp", req, resp);
     }
 
     private void handleUserInformation(HttpServletRequest req, HttpServletResponse resp) throws Exception {

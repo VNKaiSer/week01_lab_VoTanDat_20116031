@@ -30,10 +30,10 @@
 
     editButton.addEventListener("click", () => {
             // Chuyển nút "Sửa" thành nút "Lưu"
-            if (editButton.textContent === "Lưu") {
-                editButton.type = "submit";
-            }
-            editButton.textContent = "Lưu";
+        if (editButton.textContent === "Lưu") {
+            editButton.type = "submit";
+        }
+        editButton.textContent = "Lưu";
 
 
             // Bật trạng thái chỉnh sửa
@@ -45,7 +45,7 @@
         nameElement.focus();
 
             // Đặt con trỏ vào ô nhập liệu đầu tiên (tên)
-            nameElement.focus();
+        nameElement.focus();
 
     });
 </script>

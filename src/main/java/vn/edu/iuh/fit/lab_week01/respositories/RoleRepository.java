@@ -95,7 +95,7 @@ public class RoleRepository implements IFRespository<Role> {
      * @throws SQLException if there is an error executing the SQL query
      */
     public List<String> getRolesFromAccount(String accountId) throws SQLException {
-        String sql = "SELECT role_name \n" +
+        String sql = "SELECT role_id \n" +
                 "FROM role\n" +
                 "WHERE role_id IN(\n" +
                 "\tSELECT role_id \n" +
@@ -107,7 +107,7 @@ public class RoleRepository implements IFRespository<Role> {
             ResultSet rs = ppsm.executeQuery();
             List<String> roles = new ArrayList<>();
             while (rs.next()){
-                roles.add(rs.getString("role_name"));
+                roles.add(rs.getString("role_id"));
             }
             return roles;
         }

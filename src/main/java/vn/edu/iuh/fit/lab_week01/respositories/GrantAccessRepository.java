@@ -7,13 +7,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static vn.edu.iuh.fit.lab_week01.constant.Constant.MAPISGRANT;
-
-public class GrantAccessRespository implements IFRespository<GrantAccess> {
+public class GrantAccessRepository implements IFRespository<GrantAccess> {
     private final String TABLE_NAME = "grant_access";
     private Connection connection;
 
-    public GrantAccessRespository() throws Exception {
+    public GrantAccessRepository() throws Exception {
         connection = DBConnect.getInsance().getConn();
     }
     @Override

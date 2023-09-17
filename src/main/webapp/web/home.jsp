@@ -14,22 +14,25 @@
         <h1 class="text-2xl font-semibold mb-4">Home</h1>
         <ul>
             <li><a href="${pageContext.request.contextPath}/web?action=user-information" class="block py-2">Thông tin cá nhân</a></li>
-            <li><a href="${pageContext.request.contextPath}/web?action=create-account" class="block py-2">Danh sách quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=user-role" class="block py-2">Danh sách quyền</a></li>
+            <li><a href="${pageContext.request.contextPath}/web?action=logout" class="block py-2">Đăng xuất</a></li>
         </ul>
     </aside>
 
     <!-- Nội dung chính -->
     <main class="bg-white w-4/5 p-4">
-        <%
+        <<%
             String action = request.getParameter("action");
             if (action != null) {
                 if (action.equals("home")) {
-            %><jsp:include page="/web/home.jsp" /><%
-            } else if (action.equals("user-information")) {
-                %><jsp:include page="/account/user-information.jsp" /><%
+                    %><jsp:include page="/web/home.jsp" /><%
+                } else if (action.equals("user-information")) {
+                    %><jsp:include page="/account/user-information.jsp" /><%
+                } else if (action.equals("user-role")) {
+                    %><jsp:include page="/account/user-role.jsp" /><%
+                }
             }
-        }
-    %>
+        %>
     </main>
 </div>
 </body>
