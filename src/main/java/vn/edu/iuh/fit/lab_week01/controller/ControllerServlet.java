@@ -32,46 +32,86 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
+        session = req.getSession();
+        Boolean isLogin = (Boolean) session.getAttribute("isLogin");
         try {
             if (action != null) {
                 switch (action) {
                     case "":
+//                        session.setAttribute("isLogin", false);
                         sendHelloResponse(resp);
                         break;
                     case "login":
+                        session.setAttribute("isLogin", false);
                         forwardToPage("/web/login.jsp", req, resp);
                         break;
                     case "register":
                         forwardToPage("/web/register.jsp", req, resp);
                         break;
                     case "edit-account":
-                        handleEditAccount(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleEditAccount(req, resp);
+                        }
                         break;
                     case "list-account":
-                        handleListAccount(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleListAccount(req, resp);
+                        }
                         break;
                     case "create-account":
-                        forwardToPage("/web/dashboard.jsp", req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            forwardToPage("/web/dashboard.jsp", req, resp);
+                        }
                         break;
                     case "delete-account":
-                        handleDeleteAccount(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleDeleteAccount(req, resp);
+                        }
                         break;
                     case "list-role":
-                        handleListRole(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleListRole(req, resp);
+                        }
                         break;
                     case "manager-role":
-                        handleManagerRole(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleManagerRole(req, resp);
+                        }
                         break;
                     case "user-information":
-                        handleUserInformation(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleUserInformation(req, resp);
+                        }
                         break;
                     case "user-role":
-                        handleUserRoles(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleUserRoles(req, resp);
+                        }
                         break;
                     case "logout":
-                        handleLogout(req, resp);
+                        if (!isLogin) {
+                            forwardToPage("/web/login.jsp", req, resp);
+                        } else {
+                            handleLogout(req, resp);
+                        }
                         break;
-                        
+
                 }
             } else {
                 sendHelloResponse(resp);
@@ -262,7 +302,6 @@ public class ControllerServlet extends HttpServlet {
     private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
-        session = req.getSession();
         session.setAttribute("username", username);
         AccountService accountService = new AccountServiceImpl();
 
@@ -272,9 +311,11 @@ public class ControllerServlet extends HttpServlet {
             switch (status) {
                 case 1:
                     handleAdminLogin(req, resp);
+                    session.setAttribute("isLogin", true);
                     break;
                 case 0:
                     handleUserLogin(req, resp);
+                    session.setAttribute("isLogin", true);
                     break;
                 case -1:
                 case -2:
