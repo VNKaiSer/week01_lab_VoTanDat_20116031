@@ -10,13 +10,16 @@ import vn.edu.iuh.fit.lab_week01.constant.env;
 import vn.edu.iuh.fit.lab_week01.models.*;
 import vn.edu.iuh.fit.lab_week01.services.AccountService;
 import vn.edu.iuh.fit.lab_week01.services.GrandAccessService;
+import vn.edu.iuh.fit.lab_week01.services.LogService;
 import vn.edu.iuh.fit.lab_week01.services.RoleService;
 import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
 import vn.edu.iuh.fit.lab_week01.services.impl.GrandAccessServiceImpl;
+import vn.edu.iuh.fit.lab_week01.services.impl.LogServiceImpl;
 import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +81,9 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
-    private void handleLogout(HttpServletRequest req, HttpServletResponse resp) {
-
+    private void handleLogout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        writeLogLogout("");
+        resp.sendRedirect(env.appName + "/web?action=login");
     }
 
     private void handleUserRoles(HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -87,9 +91,6 @@ public class ControllerServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
         System.out.println("account = " + account);
         List<Role> roles = roleService.getRolesFromAccount(account.getAccountId());
-        for (Role role : roles) {
-            System.out.println(role);
-        }
         req.setAttribute("roles", roles);
         forwardToPage("/web/home.jsp", req, resp);
     }
@@ -263,7 +264,6 @@ public class ControllerServlet extends HttpServlet {
         String password = req.getParameter("password");
         session = req.getSession();
         session.setAttribute("username", username);
-        session.setAttribute("timeLogin", System.currentTimeMillis());
         AccountService accountService = new AccountServiceImpl();
 
         try {
@@ -286,21 +286,47 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
+    /***
+     * function to write log write login
+     * @param message
+     * @throws Exception
+     */
+    private void writeLogLogin(String message) throws Exception {
+        Account account = (Account) session.getAttribute("account");
+        LocalDateTime timeLogin = LocalDateTime.now();
+        Logs logs = new Logs(account.getAccountId(), timeLogin, timeLogin, message);
+        session.setAttribute("loginLog", logs);
+    }
+
+    private void writeLogLogout(String message) throws Exception {
+        LogService logService = new LogServiceImpl();
+        Logs logs = (Logs) session.getAttribute("loginLog");
+        LocalDateTime timeLogout = LocalDateTime.now();
+        logs.setLogOutDate(timeLogout);
+        logs.setNotes(message);
+        logService.insertLogs(logs);
+        // remote session
+        session.invalidate();
+    }
+
     private void handleAdminLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         AccountService accountService = new AccountServiceImpl();
         List<Account> accounts = accountService.getAllAccount();
+        Account account = accountService.getAccountById(req.getParameter("username"));
+        session = req.getSession();
+        session.setAttribute("account", account);
+        writeLogLogin("");
         req.setAttribute("accounts", accounts);
         forwardToPage("/web/dashboard.jsp", req, resp);
         sendSuccessMessage(resp, "Welcome admin!");
     }
 
     private void handleUserLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-
         AccountService accountService = new AccountServiceImpl();
         Account account = accountService.getAccountById(req.getParameter("username"));
         session = req.getSession();
         session.setAttribute("account", account);
-        System.out.println(session.getAttribute("account"));
+        writeLogLogin("");
         forwardToPage("/web/home.jsp", req, resp);
         sendSuccessMessage(resp, "Welcome user!");
     }

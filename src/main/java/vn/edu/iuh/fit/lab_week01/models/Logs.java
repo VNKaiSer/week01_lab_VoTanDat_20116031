@@ -1,18 +1,19 @@
 package vn.edu.iuh.fit.lab_week01.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Logs {
     private long logId;
     private String acountId;
-    private Date logInDate;
-    private Date logOutDate;
+    private LocalDateTime logInDate;
+    private LocalDateTime logOutDate;
     private String notes;
 
     public Logs() {
     }
 
-    public Logs(String acountId, Date logInDate, Date logOutDate, String notes) {
+    public Logs(String acountId, LocalDateTime logInDate, LocalDateTime logOutDate, String notes) {
         this.acountId = acountId;
         this.logInDate = logInDate;
         this.logOutDate = logOutDate;
@@ -35,19 +36,19 @@ public class Logs {
         this.acountId = acountId;
     }
 
-    public String getLogInDate() {
-        return String.valueOf(logInDate);
+    public LocalDateTime getLogInDate() {
+        return logInDate;
     }
 
-    public void setLogInDate(Date logInDate) {
+    public void setLogInDate(LocalDateTime logInDate) {
         this.logInDate = logInDate;
     }
 
-    public String getLogOutDate() {
-        return String.valueOf(logOutDate);
+    public LocalDateTime getLogOutDate() {
+        return logOutDate;
     }
 
-    public void setLogOutDate(Date logOutDate) {
+    public void setLogOutDate(LocalDateTime logOutDate) {
         this.logOutDate = logOutDate;
     }
 
