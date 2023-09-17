@@ -6,13 +6,13 @@
         <div class="max-w-md mx-auto bg-white p-4 rounded shadow-lg">
             <div class="user-info space-y-2">
                 <label for="name" class="font-bold">Tên:</label>
-                <span id="name" class="block" contentEditable="false"><%=account.getFullName()%></span>
+                <input type="text" id="name" name="name" value="<%=account.getFullName()%>" class="block" readonly>
 
                 <label for="email" class="font-bold">Email:</label>
-                <span id="email" class="block" contentEditable="false"><%=account.getEmail()%></span>
+                <input type="email" id="email" name="email" value="<%=account.getEmail()%>" class="block" readonly>
 
                 <label for="phone" class="font-bold">Điện thoại:</label>
-                <span id="phone" class="block" contentEditable="false"><%=account.getPhone()%></span>
+                <input type="tel" id="phone" name="phone" value="<%=account.getPhone()%>" class="block" readonly>
             </div>
 
             <button id="edit-button" type="button" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
@@ -21,6 +21,7 @@
         </div>
     </div>
 </form>
+
 <script>
     const editButton = document.getElementById("edit-button");
     const nameElement = document.getElementById("name");
@@ -36,9 +37,12 @@
 
 
             // Bật trạng thái chỉnh sửa
-            nameElement.contentEditable = "true";
-            emailElement.contentEditable = "true";
-            phoneElement.contentEditable = "true";
+        nameElement.removeAttribute("readonly");
+        emailElement.removeAttribute("readonly");
+        phoneElement.removeAttribute("readonly");
+
+        // Đặt con trỏ vào ô nhập liệu đầu tiên (tên)
+        nameElement.focus();
 
             // Đặt con trỏ vào ô nhập liệu đầu tiên (tên)
             nameElement.focus();

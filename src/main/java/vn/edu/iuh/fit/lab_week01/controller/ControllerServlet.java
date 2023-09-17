@@ -15,54 +15,58 @@ import vn.edu.iuh.fit.lab_week01.services.impl.AccountServiceImpl;
 import vn.edu.iuh.fit.lab_week01.services.impl.GrandAccessServiceImpl;
 import vn.edu.iuh.fit.lab_week01.services.impl.RoleServiceImpl;
 
-
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ControllerServlet")
 public class ControllerServlet extends HttpServlet {
     HttpSession session;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        try{
-        if (action != null) {
-            switch (action) {
-                case "":
-                    sendHelloResponse(resp);
-                    break;
-                case "login":
-                    forwardToPage("/web/login.jsp", req, resp);
-                    break;
-                case "register":
-                    forwardToPage("/web/register.jsp", req, resp);
-                    break;
-                case "edit-account":
-                    handleEditAccount(req, resp);
-                    break;
-                case "list-account":
-                    handleListAccount(req, resp);
-                    break;
-                case "create-account":
-                    forwardToPage("/web/dashboard.jsp", req, resp);
-                    break;
-                case "delete-account":
-                    handleDeleteAccount(req, resp);
-                    break;
-                case "list-role":
-                    handleListRole(req, resp );
-                    break;
-                case "manager-role":
-                    handleManagerRole(req, resp);
-                    break;
-                case "user-information":
-                    handleUserInformation(req, resp);
-                    break;
+        try {
+            if (action != null) {
+                switch (action) {
+                    case "":
+                        sendHelloResponse(resp);
+                        break;
+                    case "login":
+                        forwardToPage("/web/login.jsp", req, resp);
+                        break;
+                    case "register":
+                        forwardToPage("/web/register.jsp", req, resp);
+                        break;
+                    case "edit-account":
+                        handleEditAccount(req, resp);
+                        break;
+                    case "list-account":
+                        handleListAccount(req, resp);
+                        break;
+                    case "create-account":
+                        forwardToPage("/web/dashboard.jsp", req, resp);
+                        break;
+                    case "delete-account":
+                        handleDeleteAccount(req, resp);
+                        break;
+                    case "list-role":
+                        handleListRole(req, resp);
+                        break;
+                    case "manager-role":
+                        handleManagerRole(req, resp);
+                        break;
+                    case "user-information":
+                        handleUserInformation(req, resp);
+                        break;
+                }
+            } else {
+                sendHelloResponse(resp);
             }
-        } else {
-            sendHelloResponse(resp);
-        }} catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -141,6 +145,7 @@ public class ControllerServlet extends HttpServlet {
         out.println("alert('" + errorMessage + "');");
         out.println("</script>");
     }
+
     private void sendErrorMessage(HttpServletResponse resp, String errorMessage) throws IOException {
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
@@ -157,38 +162,44 @@ public class ControllerServlet extends HttpServlet {
             AccountService accountService = new AccountServiceImpl();
             GrandAccessService grandAccessService = new GrandAccessServiceImpl();
 
-        if (action != null) {
-            switch (action) {
-                case "login":
-                    handleLogin(req, resp);
-                    break;
-                case "register":
-                    handleRegister(req, resp);
-                    break;
-                case "edit-account":
-                    handleEditAccountPost(req, resp, accountService);
-                    break;
-                case "create-account":
-                    handleCreateAccount(req, resp, accountService);
-                    break;
-                case "manager-role":
-                    handleManagerRolePost(req, resp, grandAccessService);
-                    break;
-                case "user-information":
-                    handleEditUserInformation(req, resp, accountService);
-                default:
-                    sendHelloResponse(resp);
-                    break;
+            if (action != null) {
+                switch (action) {
+                    case "login":
+                        handleLogin(req, resp);
+                        break;
+                    case "register":
+                        handleRegister(req, resp);
+                        break;
+                    case "edit-account":
+                        handleEditAccountPost(req, resp, accountService);
+                        break;
+                    case "create-account":
+                        handleCreateAccount(req, resp, accountService);
+                        break;
+                    case "manager-role":
+                        handleManagerRolePost(req, resp, grandAccessService);
+                        break;
+                    case "user-information":
+                        handleEditUserInformation(req, resp, accountService);
+                    default:
+                        sendHelloResponse(resp);
+                        break;
+                }
+            } else {
+                sendHelloResponse(resp);
             }
-        } else {
-            sendHelloResponse(resp);
-        }}catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private void handleEditUserInformation(HttpServletRequest req, HttpServletResponse resp, AccountService accountService) throws Exception {
         Account account = (Account) session.getAttribute("account");
+        req.getParameterMap().forEach(
+                (key, value) -> {
+                    System.out.println(key + " : " + Arrays.toString(value));
+                }
+        );
         account.setFullName(req.getParameter("name"));
         account.setEmail(req.getParameter("email"));
         account.setPhone(req.getParameter("phone"));
@@ -205,7 +216,7 @@ public class ControllerServlet extends HttpServlet {
         String note = req.getParameter("note");
         String status = req.getParameter("status");
         if (status.equals("1")) {
-            grandAccessService.insertGrandAccess(new GrantAccess(roleId,accountId , ISGRANT.ENABLED, note));
+            grandAccessService.insertGrandAccess(new GrantAccess(roleId, accountId, ISGRANT.ENABLED, note));
         } else {
             grandAccessService.insertGrandAccess(new GrantAccess(roleId, accountId, ISGRANT.DISABLED, note));
         }
@@ -221,7 +232,7 @@ public class ControllerServlet extends HttpServlet {
 
 
     private void handleRegister(HttpServletRequest req, HttpServletResponse resp) {
-        
+
     }
 
     private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -260,7 +271,7 @@ public class ControllerServlet extends HttpServlet {
         sendSuccessMessage(resp, "Welcome admin!");
     }
 
-    private void handleUserLogin( HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private void handleUserLogin(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         AccountService accountService = new AccountServiceImpl();
         Account account = accountService.getAccountById(req.getParameter("username"));
@@ -363,7 +374,6 @@ public class ControllerServlet extends HttpServlet {
             sendErrorMessage(resp, "Invalid input data!");
         }
     }
-
 
 
 }

@@ -6,5 +6,5 @@ public interface DBConfig {
 
     //  Database credentials
     String USER = "root";
-    String PASS = "rôt";
+    String PASS = "root";
 }
