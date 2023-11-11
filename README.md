@@ -36,6 +36,7 @@ Bài tập lab01 week1
 - Mở dự án bằng IntelliJ
 - Chọn services là Tomcat
 - Bấm build để chạy dự án
+- Mở trình duyện và xem dự án tại http://localhost:8080
 
 ## 5. Các công cụ đã sử dụng
 
